@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "yarn parcel build src/index.html --public-url /ngen-website",
+    "build": "yarn parcel build --public-url=/ngen-website src/index.html",
     "dev": "yarn parcel src/index.html"
   },
   "devDependencies": {
