@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
+$sans: "Open Sans", "Helvetica", sans-serif;
+$serif: "Playfair Display", Georgia, serif;
+
+
 * {
   margin: 0;
   padding: 0;
@@ -20,17 +24,23 @@ body {
 
 .sticky {
   position: sticky;
+  z-index: -1;
   top: 0;
 }
 
 .step {
   height: 90vh;
+
+  p {
+    background-color: #FFFE;
+    padding: 20px;
+  }
 }
 
 section.header {
   width: 90vw;
   max-width: 800px;
-  margin-top: 200px;
+  margin: 200px 0 100px 0;
 
   display: flex;
   flex-direction: row;
@@ -38,7 +48,7 @@ section.header {
   align-items: center;
 
   .hed, .subhed {
-    font-family: "Playfair Display", Georgia;
+    font-family: $serif;
     font-weight: 400;
   }
 
@@ -52,5 +62,21 @@ section.header {
 section.intro {
   .intro-dots {
     top: 30vh;
+    aspect-ratio: 1 / 1;
+
+    svg {
+      position: absolute;
+    }
+
+    span {
+      text-align: right;
+      transform: translate(-100%, 0);
+      font-family: $sans;
+      font-size: 12px;
+
+      position: absolute;
+      left: -10;
+      transition: top 0.2s;
+    }
   }
 }
