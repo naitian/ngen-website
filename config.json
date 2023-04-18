@@ -3,6 +3,6 @@
   "fetch": [],
   "deployment": {
     "url": "https://naitian.github.io/ngen-website",
-    "build": "build/"
+    "build": "dist/"
   }
 }
