@@ -67,7 +67,7 @@ export class Dots {
     await this.loadData()
     this.resize()
     this.svg = d3.select(this.figure)
-      .append("svg")
+      .select("svg")
       .attr("width", this.width)
       .attr("height", this.height)
     this.figure.append(this.svg.node())
@@ -166,6 +166,9 @@ export class Dots {
           enter
             .append("circle")
             .attr("r", this.circleRadius)
+            .attr("cx", 0)
+            .attr("cy", (d) => d.y)
+          .transition().duration(200)
             .attr("cx", (d) => d.x)
             .attr("cy", (d) => d.y),
         (update) =>

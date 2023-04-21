@@ -64,12 +64,21 @@ section.intro {
     top: 30vh;
     aspect-ratio: 1 / 1;
 
+    figcaption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      font-family: $sans;
+      font-size: 10px;
+    }
+
     svg {
       position: absolute;
     }
 
     span {
       text-align: right;
+      text-transform: capitalize;
       transform: translate(-100%, 0);
       font-family: $sans;
       font-size: 12px;
@@ -78,5 +87,14 @@ section.intro {
       left: -10;
       transition: top 0.2s;
     }
+  }
+}
+
+section.education {
+  min-height: 300px;
+  .education-chart {
+    aspect-ratio: 1 / 1;
+    max-height: 80vh;
+    padding-top: 10vh;
   }
 }
