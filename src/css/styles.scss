@@ -19,13 +19,27 @@ body {
 .center {
   position: relative;
   left: 50%;
-  transform: translate(-50%, 0)
+  transform: translate(-50%, 0);
 }
 
 .sticky {
   position: sticky;
   z-index: -1;
   top: 0;
+}
+
+p {
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.7;
+  font-family: $serif;
+}
+
+svg {
+  text {
+    font-family: $sans;
+    font-size: 12px;
+  }
 }
 
 .step {
@@ -96,5 +110,40 @@ section.education {
     aspect-ratio: 1 / 1;
     max-height: 80vh;
     padding-top: 10vh;
+  }
+}
+
+div.tooltip {
+  max-width: 200px;
+  font-family: $sans;
+  font-size: 12px;
+  background-color: white;
+  padding: 7px 5px;
+  border: 1px solid black;
+  border-radius: 2px;
+}
+
+section.occupation {
+  margin-top: 100px;
+  width: 90vw;
+  max-width: 800px;
+  figure {
+    margin-top: 40px;
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    position: relative;
+
+    .wrapper {
+      position: relative;
+      span {
+        font-family: $sans;
+        font-size: 12px;
+        position: absolute;
+        bottom: -5;
+        left: 15;
+      }
+    }
   }
 }

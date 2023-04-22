@@ -4,6 +4,7 @@ import mitt from "mitt";
 import { Globe } from "./globe";
 import { Dots } from "./dots";
 import { EducationChart } from "./education";
+import { JobChart } from "./occupation";
 
 
 window.onload = () => {
@@ -15,6 +16,8 @@ window.onload = () => {
   const globe = new Globe({ emitter });
   const dots = new Dots({ emitter });
   const educ = new EducationChart({ emitter });
+
+  const occupation = new JobChart({ emitter })
 
   scroller
     .setup({
