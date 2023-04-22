@@ -123,6 +123,12 @@ div.tooltip {
   border-radius: 2px;
 }
 
+p.notes {
+  font-style: italic;
+  font-family: $sans;
+  font-size: 12px;
+}
+
 section.occupation {
   margin-top: 100px;
   width: 90vw;
@@ -141,7 +147,7 @@ section.occupation {
         font-family: $sans;
         font-size: 12px;
         position: absolute;
-        bottom: -5;
+        top: -2;
         left: 15;
       }
     }
