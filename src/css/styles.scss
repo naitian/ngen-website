@@ -153,3 +153,24 @@ section.occupation {
     }
   }
 }
+
+
+// FIXME: HACKS THAT WE SHOULD CHANGE
+h2 {
+  width: 80vw;
+  max-width: 600px;
+  margin: 0 auto;
+  font-family: $serif;
+}
+
+h3 {
+  font-family: $serif;
+  font-size: 1em;
+  font-weight: 400;
+  font-style: italic;
+  max-width: 600px;
+  width: 80vw;
+  margin: 0 auto;
+  line-height: 1.7;
+
+}

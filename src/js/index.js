@@ -31,7 +31,7 @@ window.onload = () => {
         emitter.emit("select-region", {selectedRegion: "ASIA"})
       }
       if (element.dataset.step.includes("edu")) {
-        emitter.emit("set-slice", index - 3)
+        emitter.emit("set-slice", +element.dataset.edu - 1)
       }
       // { element, index, direction }
     })
