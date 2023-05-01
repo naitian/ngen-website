@@ -6,6 +6,7 @@ import { Dots } from "./dots";
 import { EducationChart } from "./education";
 import { JobChart } from "./occupation";
 
+import { initializeGlossary } from "./glossary";
 
 window.onload = () => {
   console.log("HI")
@@ -18,6 +19,7 @@ window.onload = () => {
   const educ = new EducationChart({ emitter });
 
   const occupation = new JobChart({ emitter })
+  initializeGlossary()
 
   scroller
     .setup({

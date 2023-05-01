@@ -174,3 +174,27 @@ h3 {
   line-height: 1.7;
 
 }
+
+.definition {
+  text-decoration-line: underline;
+  text-decoration-color: #44f;
+  text-decoration-style: dotted;
+  cursor: pointer;
+}
+
+.glossary-tooltip {
+  width: 90vw;
+  max-width: 500px;
+  max-height: 300px;
+  padding: 10px;
+  border-radius: 3px;
+  position: absolute;
+
+  background: white;
+  border: 1px solid #44f;
+  display: none;
+
+  &.open {
+    display: block;
+  }
+}
