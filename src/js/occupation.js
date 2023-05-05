@@ -13,6 +13,7 @@ export class JobChart {
     this.figure = document.querySelector(selector)
 
     this.emitter = emitter
+    console.log(this.emitter)
     this.genInd = 0;
 
     this.generations = [
@@ -91,6 +92,16 @@ export class JobChart {
       svg.attr("height") - this.margin.top - this.margin.bottom
     ]).paddingInner(0.5)
 
+    const selectOccupation = ({occupation}) => {
+      g.selectAll("rect").filter(d => d.data[0] === occupation).attr("stroke-width", 1)
+    }
+    const deselectOccupation = () => {
+      g.selectAll("rect").attr("stroke-width", 0.1)
+    }
+
+    this.emitter.on("select-occupation", selectOccupation)
+    this.emitter.on("deselect-occupation", deselectOccupation)
+
     treemap(hierarchyData)
     const figure = this.figure
     const tooltip = this.tooltip
@@ -104,31 +115,34 @@ export class JobChart {
       .attr("stroke", d => d.parent.parent.data[0] === "White Collar" ? "black" : "white")
       .on("mouseover", function (e, d) {
         const [x, y] = d3.pointer(e, figure);
-        console.log(d)
+        this.emitter.emit("select-occupation", {e, d})
         tooltip
           .style("left", x)
           .style("top", y)
           .style("visibility", "visible")
           .style("z-index", 10)
           .text(d.data[0])
-        d3.select(this).attr("stroke-width", 1)
-      })
+        // d3.select(this).attr("stroke-width", 1)
+      }.bind(this))
       .on("mousemove", function (e, d) {
+        this.emitter.emit("select-occupation", {occupation: d.data[0]})
         const [x, y] = d3.pointer(e, figure);
+        const pctFmt = d3.format(".0%")
         tooltip
           .style("left", x + 5)
           .style("top", y + 5)
           .style("visibility", "visible")
           .style("z-index", 10)
-          .text(d.data[0])
+          .text(`${d.data[0]} (${pctFmt(d.data[1] / hierarchyData.value)})`)
 
-        d3.select(this).attr("stroke-width", 1)
-      })
-      .on("mouseout", function () {
-        d3.select(this).attr("stroke-width", 0.1)
+        // d3.select(this).attr("stroke-width", 1)
+      }.bind(this))
+      .on("mouseout", function (_, d) {
+        this.emitter.emit("deselect-occupation", {occupation: d.data[0]})
+        // d3.select(this).attr("stroke-width", 0.1)
         tooltip
           .style("visibility", "hidden")
-      })
+      }.bind(this))
 
 
     const total = d3.sum(hierarchyData.children.map(d => d.value))
