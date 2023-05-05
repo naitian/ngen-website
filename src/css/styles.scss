@@ -144,8 +144,12 @@ section.preamble {
 section.education {
   min-height: 300px;
   .education-chart {
-    aspect-ratio: 1 / 1;
-    max-height: 80vh;
+    // aspect-ratio: 1 / 1;
+    width: 100%;
+    max-height: 600px;
+    height: 80vh;
+
+    // max-height: 80vh;
     padding-top: 10vh;
   }
 }
