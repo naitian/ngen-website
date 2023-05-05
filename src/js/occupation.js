@@ -133,8 +133,10 @@ export class JobChart {
 
     const total = d3.sum(hierarchyData.children.map(d => d.value))
     const pctFmt = d3.format(".0%")
-    g.selectAll("text").data(hierarchyData.children)
+
+    g.selectAll("text.shadow").data(hierarchyData.children)
       .join("text")
+      .attr("class", "shadow")
       .attr("x", d => (d.x0 + d.x1) / 2)
       .attr("y", d => (d.y0 + d.y1) / 2)
       .attr("dominant-baseline", "middle")
@@ -146,6 +148,24 @@ export class JobChart {
       .attr("stroke-linejoin", "round")
       .style("pointer-events", "none")
       .text(d => `${d.data[0]} (${pctFmt(d.value / total)})`)
+      .style("text-shadow", "black 0 1px 2px")
+
+    g.selectAll("text.display").data(hierarchyData.children)
+      .join("text")
+      .attr("class", "display")
+      .attr("x", d => (d.x0 + d.x1) / 2)
+      .attr("y", d => (d.y0 + d.y1) / 2)
+      .attr("dominant-baseline", "middle")
+      .attr("text-anchor", "middle")
+      .attr("stroke", "white")
+      .attr("stroke-width", 4)
+      .attr("paint-order", "stroke")
+      .attr("stroke-linecap", "round")
+      .attr("stroke-linejoin", "round")
+      .style("pointer-events", "none")
+      .text(d => `${d.data[0]} (${pctFmt(d.value / total)})`)
+      .raise()
+
   }
 
 
@@ -168,7 +188,7 @@ export class JobChart {
 
     wrappers.append("svg")
       .attr("width", this.width / 2)
-      .attr("height", this.width / 2)
+      .attr("height", this.width / 4)
       .each(this.renderSmallMultiple.bind(this))
 
     wrappers.append("span").text((_, i) => this.generations[i])
