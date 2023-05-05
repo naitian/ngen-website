@@ -1,7 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+// @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Source+Serif+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
 
 $sans: "Open Sans", "Helvetica", sans-serif;
-$serif: "Playfair Display", Georgia, serif;
+$serif: "Source Serif Pro", Georgia, serif;
 
 
 * {
@@ -62,21 +64,52 @@ section.header {
   align-items: center;
 
   .hed, .subhed {
-    font-family: $serif;
+    font-family: $sans;
     font-weight: 400;
   }
 
+}
+
+section.preamble {
+  width: 80vw;
+  .globe {
+    margin: 30px 0;
+    display: flex;
+    justify-content: space-around;
+
+    div.dots-container {
+      flex-grow: 1;
+    }
+    figure {
+      height: calc(800px / 3);
+      margin: 20px 20px 20px 100px;
+    }
+
+    p {
+      font-family: $sans;
+      font-size: 14px;
+    }
+    p.caption {
+      &::after {
+        content: " Click on the globe to see a country-level breakdown for each region.";
+        font-style: italic;
+      }
+    }
+    p.legend {
+      font-style: italic;
+      font-size: 12px;
+    }
+
+  }
   .globe-canvas {
-    width: 30vw;
+    width: 40%;
     max-width: calc(800px / 3);
     aspect-ratio: 1 / 1;
   }
-}
 
-section.intro {
   .intro-dots {
-    top: 30vh;
-    aspect-ratio: 1 / 1;
+    position: relative;
+    // aspect-ratio: 1 / 1;
 
     figcaption {
       position: absolute;
@@ -93,12 +126,12 @@ section.intro {
     span {
       text-align: right;
       text-transform: capitalize;
-      transform: translate(-100%, 0);
+      transform: translate(-100%, -50%);
       font-family: $sans;
       font-size: 12px;
 
       position: absolute;
-      left: -10;
+      // left: -10;
       transition: top 0.2s;
     }
   }
@@ -160,7 +193,7 @@ h2 {
   width: 80vw;
   max-width: 600px;
   margin: 0 auto;
-  font-family: $serif;
+  font-family: $sans;
 }
 
 h3 {

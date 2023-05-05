@@ -192,11 +192,22 @@ export class Globe {
       (this.context.fillStyle = this.colors.land),
       this.context.fill();
 
+    // invalidate US
+    this.context.beginPath(),
+      this.path(this.data.regions.get("UNITED STATES")),
+      (this.context.fillStyle = "#eee"),
+      this.context.fill(),
+      this.context.closePath();
+
+
     // draw hover region
     this.context.beginPath(),
       this.path(this.data.regions.get(this.hoverRegion)),
       (this.context.fillStyle = this.colors.hover),
       this.context.fill(),
+      (this.context.strokeStyle = "#000"),
+      (this.context.lineWidth = 1.5),
+      this.context.stroke(),
       this.context.closePath();
 
     // draw selected region

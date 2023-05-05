@@ -15,7 +15,7 @@ window.onload = () => {
   const scroller = scrollama();
 
   const globe = new Globe({ emitter });
-  const dots = new Dots({ emitter });
+  const dots = new Dots({ emitter, circleRadius: 1.5, circlePadding: 0.5 });
   const educ = new EducationChart({ emitter });
 
   const occupation = new JobChart({ emitter })

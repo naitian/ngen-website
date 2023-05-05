@@ -26,6 +26,9 @@ const prepareData = async (numPerDot = 10000) => {
     "OTHER NORTH AMERICA",
     "SOUTH AMERICA"
   ]
+  const regionCounts = new Map(d3.groups(processed, (d) => d.BPL_REGION)
+    .map((d) => [d[0], d[1].reduce((a, b) => a + b.count, 0)]))
+
   const exploded = processed
     .flatMap((d) => Array(Math.round(d.count / numPerDot)).fill(d))
     .filter((d) => regions.includes(d.BPL_REGION))
@@ -33,22 +36,43 @@ const prepareData = async (numPerDot = 10000) => {
       i,
       ...d
     }))
-  return { exploded, regions };
+  return { exploded, regions, regionCounts };
 }
 
 
 export class Dots {
   constructor({
     selector = "figure.intro-dots",
+    captionSelector = ".dots-container .caption",
     circleRadius = 2.5,
     circlePadding = 1,
+    groupPadding = 10,
     emitter
   } = {}) {
+
+    this.captionTemplate = (numPeople, region) => {
+      const regionMap = {
+        AFRICA: "Africa",
+        ASIA: "Asia",
+        CARIBBEAN: "Caribbean",
+        "CENTRAL AMERICA": "Central America",
+        EUROPE: "Europe",
+        OCEANIA: "Oceania",
+        "OTHER NORTH AMERICA": "North America (excluding the U.S.)",
+        "SOUTH AMERICA": "South America",
+        null: "another country"
+     }
+      const fmt = new Intl.NumberFormat("en-US", {notation: "compact", compactDisplay: "long"})
+      return `In 2022, there were <b>${fmt.format(numPeople)}</b> people living in the United States who moved there from <b>${regionMap[region]}</b>.`
+    }
+
     this.figure = document.querySelector(selector)
+    this.captionEl = document.querySelector(captionSelector)
     this.emitter = emitter
 
     this.circleRadius = circleRadius
-    this.circlePadding = circlePadding;
+    this.circlePadding = circlePadding
+    this.groupPadding = groupPadding
 
     this.userRegions = {
       hoverRegion: null,
@@ -83,11 +107,12 @@ export class Dots {
 
   async loadData() {
     if (this.data) return;
-    this.data = await prepareData();
+    this.data = await prepareData(10000);
   }
 
   resize() {
     const { width, height } = this.figure.getBoundingClientRect()
+    console.log(width, height)
     this.margin = {
       top: 15,
       right: 15,
@@ -98,7 +123,7 @@ export class Dots {
     this.height = height;
     this.innerWidth = this.width - this.margin.left - this.margin.right;
     this.innerHeight = this.height - this.margin.top - this.margin.bottom;
-    this.numCols = Math.floor(innerWidth / (2 * this.circleRadius + 2 * this.circlePadding))
+    this.numCols = Math.floor(this.innerWidth / (2 * this.circleRadius + 2 * this.circlePadding))
   }
 
   calculateData() {
@@ -106,26 +131,51 @@ export class Dots {
     // let selectedRegion = null;
     console.log("Regenerating data");
     let filtered = this.data.exploded;
-    let grouper = this.groupby;
+    let groupKey = "BPL_REGION"
+    let k = 5;
     if (selectedRegion) {
       filtered = this.data.exploded.filter((d) => d.BPL_REGION === selectedRegion);
-      grouper = (d) => d.BPL_COUNTRY;
+      groupKey = "BPL_COUNTRY";
+      k = 10;
     }
+    const grouper = (d) => d[groupKey];
     let group = d3.group(filtered, grouper);
+    const topk = Array.from(group.entries())
+      .sort((a, b) => d3.descending(a[1].length, b[1].length))
+      .slice(0, k);
+
+    filtered = filtered.map((d) => {
+      if (topk.map((d) => d[0]).includes(grouper(d))) {
+        return d;
+      } else {
+        return {
+          ...d,
+          [groupKey]: "Other"
+        };
+      }
+    })
+    group = d3.group(filtered, grouper);
+
     group = new Map(
       Array.from(group.entries()).sort((a, b) =>
-        d3.descending(a[1].length, b[1].length)
+        {
+          if (a[0] === "Other") {
+            return 1;
+          } else if (b[0] === "Other") {
+            return -1;
+          }
+          return d3.descending(a[1].length, b[1].length)
+        }
       )
     );
     const groupCounter = new Map();
     const groupOffsets = Array.from(
       d3.cumsum(
         Array.from(group.values())
-          .sort((a, b) => d3.descending(a.length, b.length))
           .map(
             (array) =>
               (Math.ceil(array.length / this.numCols) + 1) *
-              (2 * this.circleRadius + 2 * this.circlePadding)
+              (2 * this.circleRadius + 2 * this.circlePadding) + this.groupPadding
           )
       )
     );
@@ -150,7 +200,20 @@ export class Dots {
 
   render() {
     let { hoverRegion, selectedRegion } = this.userRegions;
+    let { regionCounts } = this.data;
     let { data, group, offsets } = this.calculateData();
+
+    console.log(this.captionEl)
+    if (selectedRegion) {
+      console.log(regionCounts[selectedRegion])
+      d3.select(this.captionEl).html(
+        this.captionTemplate(regionCounts.get(selectedRegion), selectedRegion)
+      )
+    } else {
+      d3.select(this.captionEl).html(
+        this.captionTemplate(46e6, null)
+      )
+    }
 
     const plot = this.svg;
     const g = plot
@@ -168,7 +231,7 @@ export class Dots {
             .attr("r", this.circleRadius)
             .attr("cx", 0)
             .attr("cy", (d) => d.y)
-          .transition().duration(200)
+            .transition().duration(200)
             .attr("cx", (d) => d.x)
             .attr("cy", (d) => d.y),
         (update) =>
@@ -197,14 +260,14 @@ export class Dots {
           enter
             .append("span")
             .text((d) => d[0].toLowerCase())
-            .style("top", (_, i) => offsets[i])
-            .style("margin-top", this.margin.top - 2 * this.circleRadius - 2 * this.circlePadding),
+            .style("top", (_, i) => offsets[i] + this.margin.top),
+        // .style("margin-top", this.margin.top - 2 * this.circleRadius - 2 * this.circlePadding),
         (update) =>
           update.call((update) =>
             update
               .text((d) => d[0].toLowerCase())
-              .style("left", (d) => -10)
-              .style("top", (_, i) => offsets[i])
+              // .style("left", (d) => -10)
+              .style("top", (_, i) => offsets[i] + this.margin.top)
           )
       );
   }
