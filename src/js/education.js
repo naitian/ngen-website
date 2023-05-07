@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 
-const forceRelax = function () {
+const forceRelax = function() {
   // only works in one dimension
   let valueFn = (d) => d;
   let radius = 16;
@@ -29,9 +29,6 @@ const forceRelax = function () {
     const sortedDataIndices = argsort(data, (a, b) =>
       d3.ascending(sim.value()(a), sim.value()(b))
     );
-    console.log(data.map(sim.value()));
-    console.log(sortedDataIndices);
-    console.log(orderedValues.map((d) => d.y));
 
     return sortedDataIndices.map((idx, sortedIdx) => ({
       ...data[idx],
@@ -39,19 +36,19 @@ const forceRelax = function () {
     }));
   }
 
-  sim.value = function (value) {
+  sim.value = function(value) {
     if (!arguments.length) return valueFn;
     valueFn = value;
     return sim;
   };
 
-  sim.radius = function (value) {
+  sim.radius = function(value) {
     if (!arguments.length) return radius;
     radius = value;
     return sim;
   };
 
-  sim.iterations = function (value) {
+  sim.iterations = function(value) {
     if (!arguments.length) return iterations;
     iterations = value;
     return sim;
@@ -110,7 +107,7 @@ export class EducationChart {
     const { width, height } = this.figure.getBoundingClientRect()
     this.margin = {
       top: 15,
-      right: 35,
+      right: 70,
       bottom: 20,
       left: 60,
     }
@@ -130,7 +127,8 @@ export class EducationChart {
 
     this.colorScale = d3.scaleOrdinal()
       .domain(this.generations)
-      .range(["#002051", "#7f7c75", "#fdea45", "#999"])
+      // .range(["#002051", "#7f7c75", "#fdea45", "#999"])
+      .range(["#23171B", "#16B686", "#FEB927", "#900C00"])
   }
 
   async loadData() {
@@ -165,39 +163,60 @@ export class EducationChart {
         this.educLevels.indexOf(a.EDUC_GRP),
         this.educLevels.indexOf(b.EDUC_GRP),
       ))]))
-      .join("path")
-      .attr("d", d => line(d[1]))
-      .attr("stroke", d => this.colorScale(d[0]))
-      .attr("fill", "none")
-      .attr("opacity", (d) => d[0] === genFocus ? 1 : 0.2)
+      .join((enter) =>
+        enter.append("path")
+          .attr("d", d => line(d[1].map(d => ({ ...d, ASECWT: 0 }))))
+          .attr("stroke", d => this.colorScale(d[0]))
+          .attr("stroke-width", 3)
+          .attr("stroke-dasharray", "8 4")
+          .attr("fill", "none")
+          .attr("opacity", (d) => d[0] === genFocus ? 0.8 : 0.2)
+          .transition().duration(200)
+          .attr("d", d => line(d[1])),
+        (update) => update
+          .attr("opacity", (d) => d[0] === genFocus ? 0.8 : 0.2)
+      )
 
     const relax = forceRelax().value(d => this.yScale(d[1][d[1].length - 1].ASECWT))
 
     const labels = g.selectAll("text.label")
-    .data(relax(genGroups.map(d => [d[0], d[1].sort((a, b) => d3.ascending(
-      this.educLevels.indexOf(a.EDUC_GRP),
-      this.educLevels.indexOf(b.EDUC_GRP),
-    ))])))
-      .join("text")
-      .attr("class", "label")
-      .attr("x", d => this.xScale(d[1][d[1].length - 1].EDUC_GRP) + 10)
-      .attr("y", d => d.relaxed)
-      .attr("dominant-baseline", "middle")
-      .attr("fill", d => this.colorScale(d[0]))
-      .text(d => d[0])
-      // .attr("stroke", d => this.colorScale(d[0]))
-      // .attr("fill", "none")
-      // .attr("opacity", (d) => d[0] === genFocus ? 1 : 0.2)
+      .data(relax(genGroups.map(d => [d[0], d[1].sort((a, b) => d3.ascending(
+        this.educLevels.indexOf(a.EDUC_GRP),
+        this.educLevels.indexOf(b.EDUC_GRP),
+      ))])), d => d[0])
+      .join((enter) =>
+        enter
+          .append("text")
+          .attr("class", "label")
+          .attr("x", d => this.xScale(d[1][d[1].length - 1].EDUC_GRP) + 10)
+          .attr("y", this.innerHeight)
+          .attr("dominant-baseline", "middle")
+          .attr("fill", d => this.colorScale(d[0]))
+          .text(d => d[0])
+          .transition().duration(200)
+          .attr("y", d => d.relaxed),
+        (update) => {
+          update.transition().duration(200)
+            .attr("y", d => d.relaxed)
+        })
 
 
     g.selectAll("circle")
       .data(slice)
-      .join("circle")
-      .attr("cx", d => this.xScale(d.EDUC_GRP))
-      .attr("cy", d => this.yScale(d.ASECWT))
-      .attr("r", 5)
-      .attr("fill", d => this.colorScale(d.GEN))
-      .attr("opacity", (d) => d.GEN === genFocus ? 1 : 0.4)
+      .join((enter) => {
+        enter.append("circle")
+          .attr("cx", d => this.xScale(d.EDUC_GRP))
+          .attr("cy", this.innerHeight)
+          .attr("r", 5)
+          .attr("fill", d => this.colorScale(d.GEN))
+          .attr("opacity", (d) => d.GEN === genFocus ? 1 : 0.2)
+          .transition().duration(200)
+          .attr("cy", d => this.yScale(+d.ASECWT))
+      }, (update) => {
+        update
+          .attr("opacity", (d) => d.GEN === genFocus ? 1 : 0.2)
+
+      })
 
     const xAxis = d3.axisBottom(this.xScale)
     const yAxis = d3.axisLeft(this.yScale).tickFormat(d3.format(".0%"))
@@ -207,9 +226,29 @@ export class EducationChart {
       .attr("transform", `translate(0, ${this.innerHeight})`)
       .call(xAxis)
 
-    g.selectAll("g.yaxis").data([0]).join("g")
+    const yaxis = g.selectAll("g.yaxis").data([0]).join("g")
       .attr("class", "yaxis")
       .call(yAxis)
+      .lower()
+
+    yaxis.selectAll(".tick line")
+      .attr("x1", -6)
+      .attr("x2", this.innerWidth)
+      .attr("opacity", 0.1)
+
+    yaxis.selectAll(".domain").remove()
+
+    yaxis.selectAll("text.label")
+      .data([0])
+      .join("text")
+      .attr("class", "label")
+      .attr("text-anchor", "middle")
+      .attr("y", -48)
+      .attr("x", -this.innerHeight / 2)
+      // .attr("dy", ".75em")
+      .attr("fill", "black")
+      .attr("transform", "rotate(-90)")
+      .text("Share of respondents within a generation")
   }
 
 }

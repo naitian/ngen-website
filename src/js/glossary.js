@@ -2,7 +2,7 @@ import * as d3 from 'd3';
 
 export const initializeGlossary = () => {
   console.log("HEHEH")
-  const glossItems = d3.select(".definition")
+  const glossItems = d3.selectAll(".definition")
 
   const tooltip = d3.select("body")
     .selectAll("div.glossary-tooltip")
@@ -14,6 +14,7 @@ export const initializeGlossary = () => {
 
   glossItems.on("click", function(e) {
     e.stopPropagation();
+    console.log(e)
     const [x, y] = d3.pointer(e, d3.select("body"))
     tooltip.classed("open", true).style("left", x).style("top", y).html(this.dataset.content)
     console.log(x, y)

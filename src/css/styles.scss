@@ -146,11 +146,21 @@ section.education {
   .education-chart {
     // aspect-ratio: 1 / 1;
     width: 100%;
-    max-height: 600px;
-    height: 80vh;
+    // max-height: 800px;
+    height: 60vh;
 
-    // max-height: 80vh;
-    padding-top: 10vh;
+    margin: 10vh 0;
+    top: 10vh;
+
+    .xaxis text {
+      font-family: $sans;
+      font-size: 12px;
+      text-transform: capitalize;
+    }
+
+    text.label {
+      font-weight: bold;
+    }
   }
 }
 
