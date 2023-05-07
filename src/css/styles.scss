@@ -260,3 +260,14 @@ h3 {
     display: block;
   }
 }
+
+section.nerdbox {
+  background-color: #eee;
+  padding: 20px;
+p {
+  font-family: $sans;
+  font-size: 12px;
+margin: 1rem;
+}
+  border-radius: 5px;
+}
