@@ -61,6 +61,7 @@ const prepareData = async () => {
   const data = await d3.csv(
     "https://docs.google.com/spreadsheets/d/e/2PACX-1vR_2SDYfhN9ZOX3XQ5MhsVMM5Aj8dsvB0hWuMDgwNX_GHxZwxbvRZa2X1m9O5dAJLpiKtlfHX3BFxiV/pub?gid=855946517&single=true&output=csv"
   )
+  console.log(data)
   return data
 }
 
@@ -73,7 +74,7 @@ export class EducationChart {
       "First", "Second", "Third or later", "Population"
     ]
     this.educLevels = [
-      "less than primary",
+      // "less than primary",
       "primary",
       "secondary",
       "postsecondary",
@@ -122,7 +123,7 @@ export class EducationChart {
       .range([0, this.innerWidth])
 
     this.yScale = d3.scaleLinear()
-      .domain([0, 0.5])  // from 0% to 50%
+      .domain([0, 1])  // from 0% to 50%
       .range([this.innerHeight, 0])
 
     this.colorScale = d3.scaleOrdinal()
@@ -154,9 +155,10 @@ export class EducationChart {
       .attr("transform", `translate(${this.margin.left}, ${this.margin.top})`)
 
     const genGroups = d3.groups(slice, d => d.GEN)
+    console.log(genGroups)
     const line = d3.line()
       .x(d => this.xScale(d.EDUC_GRP))
-      .y(d => this.yScale(+d.ASECWT))
+      .y(d => this.yScale(+d.CUM_WT))
 
     const lines = g.selectAll("path")
       .data(genGroups.map(d => [d[0], d[1].sort((a, b) => d3.ascending(
@@ -165,7 +167,8 @@ export class EducationChart {
       ))]))
       .join((enter) =>
         enter.append("path")
-          .attr("d", d => line(d[1].map(d => ({ ...d, ASECWT: 0 }))))
+      .each(d => console.log(d))
+          .attr("d", d => line(d[1].map(d => ({ ...d, CUM_WT: 0 }))))
           .attr("stroke", d => this.colorScale(d[0]))
           .attr("stroke-width", 3)
           .attr("stroke-dasharray", "8 4")
@@ -177,7 +180,7 @@ export class EducationChart {
           .attr("opacity", (d) => d[0] === genFocus ? 0.8 : 0.2)
       )
 
-    const relax = forceRelax().value(d => this.yScale(d[1][d[1].length - 1].ASECWT))
+    const relax = forceRelax().value(d => this.yScale(d[1][d[1].length - 1].CUM_WT))
 
     const labels = g.selectAll("text.label")
       .data(relax(genGroups.map(d => [d[0], d[1].sort((a, b) => d3.ascending(
@@ -211,7 +214,7 @@ export class EducationChart {
           .attr("fill", d => this.colorScale(d.GEN))
           .attr("opacity", (d) => d.GEN === genFocus ? 1 : 0.2)
           .transition().duration(200)
-          .attr("cy", d => this.yScale(+d.ASECWT))
+          .attr("cy", d => this.yScale(+d.CUM_WT))
       }, (update) => {
         update
           .attr("opacity", (d) => d.GEN === genFocus ? 1 : 0.2)
