@@ -70,10 +70,23 @@ section.header {
   justify-content: space-between;
   align-items: center;
 
-  .hed, .subhed {
-    font-family: $sans;
-    font-weight: 400;
+  .hed {
+    font-family: $serif;
+    font-size: 2em;
+    font-weight: 700;
+    line-height: 1.2;
   }
+
+  .subhed {
+    font-family: $sans;
+    font-size: 1em;
+    font-weight: 400;
+    line-height: 1.2;
+  }
+  // .hed, .subhed {
+  //   font-family: $sans;
+  //   font-weight: 400;
+  // }
 
 }
 
