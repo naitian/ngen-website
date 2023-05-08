@@ -11,12 +11,15 @@ export const initializeGlossary = () => {
 
   d3.select("body").on("click", _ => tooltip.classed("open", false))
 
-  glossItems.on("click", function(e) {
+  glossItems.on("mousemove", function(e) {
     e.stopPropagation();
     console.log(e)
     const [x, y] = d3.pointer(e, d3.select("body"))
-    tooltip.classed("open", true).style("left", x).style("top", y).html(this.dataset.content)
+    tooltip.classed("open", true).style("left", x + 5).style("top", y + 5).html(this.dataset.content)
     console.log(x, y)
+  }).on("mouseout", function(e) {
+    e.stopPropagation();
+    tooltip.classed("open", false)
   })
 }
 

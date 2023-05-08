@@ -16,6 +16,9 @@ body {
   max-width: 600px;
   width: 80vw;
   margin: 0 auto;
+
+  // counter for footnotes
+  counter-reset: fn-counter 0;
 }
 
 .center {
@@ -181,7 +184,6 @@ p.notes {
 }
 
 section.occupation {
-  margin-top: 100px;
   width: 90vw;
   max-width: 800px;
   figure {
@@ -239,14 +241,25 @@ h3 {
 
 .definition {
   text-decoration-line: underline;
-  text-decoration-color: #44f;
-  text-decoration-style: dotted;
+  // text-decoration-color: #44f;
+  // text-decoration-style: dotted;
   cursor: pointer;
+
+  counter-increment: fn-counter 1;
+  &::after {
+    // content: counter(fn-counter);
+    content: "?";
+    font-size: 0.4em;
+    vertical-align: super;
+    // margin-left: 0.2em;
+  }
 }
 
 .glossary-tooltip {
-  width: 90vw;
-  max-width: 500px;
+  // width: 90vw;
+  font-family: $sans;
+  font-size: 12px;
+  max-width: 25vw;
   max-height: 300px;
   padding: 10px;
   border-radius: 3px;
