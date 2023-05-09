@@ -292,11 +292,19 @@ margin: 1rem;
   width: 25%;
 }
 
-.static-viz {
+.income-viz {
   display: flex;
   margin-left: auto;
   margin-right: auto;
   max-width: 800px;
   width:100%;
+  justify-content: center;
+}
+.healthcare-viz {
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 800px;
+  width:75%;
   justify-content: center;
 }
