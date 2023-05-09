@@ -128,7 +128,6 @@ export class EducationChart {
 
     this.colorScale = d3.scaleOrdinal()
       .domain(this.generations)
-      // .range(["#002051", "#7f7c75", "#fdea45", "#999"])
       .range(["#23171B", "#16B686", "#FEB927", "#900C00"])
   }
 
@@ -198,9 +197,11 @@ export class EducationChart {
           .text(d => d[0])
           .transition().duration(200)
           .attr("y", d => d.relaxed),
+          // .attr("y", d => this.yScale(+d[1][d[1].length - 1].CUM_WT)),
         (update) => {
           update.transition().duration(200)
             .attr("y", d => d.relaxed)
+            // .attr("y", d => this.yScale(+d[1][d[1].length - 1].CUM_WT))
         })
 
 
